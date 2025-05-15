@@ -70,3 +70,61 @@ ParseWhile()
 ```do a = 1 + 2 while;          // Ожидалось условие после "while"```
 
 ![image](https://github.com/user-attachments/assets/f688e010-e767-495b-8d15-3f5c1eedf06e)
+
+## Диаграмма сканера
+```
+flowchart TD
+    Start([Начало Scan(text)])
+    CheckEnd{IsEnd?}
+    Whitespace{WhiteSpace?}
+    DigitCheck{Digit или '-'+Digit?}
+    LetterCheck{LatinLetter?}
+    RelOpCheck{RelOp или Assign?}
+    AoOpCheck{AoOp?}
+    DelimCheck{Delimiter \| StringLiteral?}
+    ErrorToken[Add Error Token]
+    ReadNumber[ReadNumber()]
+    ReadIdent[ReadIdentifierOrKeyword()]
+    ReadRel[ReadRelOrAssign()]
+    ReadAo[ReadAoOp()]
+    ReadStr[ReadStringLiteral()]
+    Advance[Advance()]
+    Return([Return _tokens])
+
+    Start --> CheckEnd
+    CheckEnd -->|Да| Return
+    CheckEnd -->|Нет| Whitespace
+    Whitespace -->|Да| Advance --> CheckEnd
+    Whitespace -->|Нет| DigitCheck
+    DigitCheck -->|Да| ReadNumber --> CheckEnd
+    DigitCheck -->|Нет| LetterCheck
+    LetterCheck -->|Да| ReadIdent --> CheckEnd
+    LetterCheck -->|Нет| RelOpCheck
+    RelOpCheck -->|Да| ReadRel --> CheckEnd
+    RelOpCheck -->|Нет| AoOpCheck
+    AoOpCheck -->|Да| ReadAo --> CheckEnd
+    AoOpCheck -->|Нет| DelimCheck
+    DelimCheck -->|Delimiter| Advance --> CheckEnd
+    DelimCheck -->|StringLiteral| ReadStr --> CheckEnd
+    DelimCheck -->|Нет| ErrorToken --> Advance --> CheckEnd
+```
+
+## Тестовые примеры
+### Корректные строки
+```do x = 5 + 3 - 1 while a < b and b != 0;```
+
+![image](https://github.com/user-attachments/assets/f1cf0b7d-f35d-4acb-81b4-3cde331c1183)
+
+```do temp = -3.5 + 4.2 while threshold <= 100;```
+
+![image](https://github.com/user-attachments/assets/59bf9b3d-0b78-4e13-99b0-e4e34ff6280d)
+
+### Лексические ошибки
+```do @x = 10 while y > 0;```
+
+![image](https://github.com/user-attachments/assets/22021ef1-f833-49cc-aaad-7829eeddcc71)
+
+### Синтаксические ошибки
+```do y = 2.5.3 while z == 5;```
+
+![image](https://github.com/user-attachments/assets/6b93710b-4741-4853-92c9-b114ce7f358e)
