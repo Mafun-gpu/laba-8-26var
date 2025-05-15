@@ -71,6 +71,8 @@ ParseWhile()
 
 ![image](https://github.com/user-attachments/assets/f688e010-e767-495b-8d15-3f5c1eedf06e)
 
+# Дополнительное задание к варианту 26
+
 ## Диаграмма сканера
 ```
 flowchart TD
